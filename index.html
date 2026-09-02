@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TDE — Travões, Discos e Embraiagens, Lda. | Recuperação de Peças Auto no Porto</title>
+  <meta name="description" content="A TDE Lda. tem 20 anos de experiência em recuperação de peças auto: embraiagens, volantes bimassa, travões, discos e tambores. Zona Industrial do Porto.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+  </script>
+</head>
+<body>
+
+  <header class="site-header">
+    <nav class="nav container" aria-label="Navegação principal">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">TDE</span>
+        <span class="brand-sub">Travões · Discos · Embraiagens</span>
+      </a>
+      <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links">
+        <li><a href="index.html">Início</a></li>
+        <li><a href="empresa.html">Empresa</a></li>
+        <li><a href="servicos.html">Serviços</a></li>
+        <li><a href="produtos.html">Produtos</a></li>
+        <li><a href="contactos.html">Contactos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ============ HERO (pin 350vh: explode fixado ao scroll) ============ -->
+    <div class="hero-pin">
+    <section class="hero" id="hero">
+      <div class="hero-grid-bg" aria-hidden="true"></div>
+      <canvas id="clutch-canvas" data-clutch-mode="hero" aria-hidden="true"></canvas>
+
+      <div class="hero-labels" aria-hidden="true">
+        <div class="part-label" data-part="z3">
+          <span class="leader"></span>
+          <span class="chip"><small>Z3 — Frente</small>Placa de Pressão — Race Pro 1000</span>
+        </div>
+        <div class="part-label" data-part="z2">
+          <span class="leader"></span>
+          <span class="chip"><small>Z2</small>Mola de Diafragma</span>
+        </div>
+        <div class="part-label" data-part="z1">
+          <span class="leader"></span>
+          <span class="chip"><small>Z1</small>Carcaça Cromada</span>
+        </div>
+        <div class="part-label" data-part="z0">
+          <span class="leader"></span>
+          <span class="chip"><small>Z0 — Base</small>Disco de Embraiagem</span>
+        </div>
+      </div>
+
+      <div class="container hero-content">
+        <p class="hero-eyebrow tech-label reveal">Zona Industrial do Porto — Desde há 20 anos</p>
+        <h1 class="reveal" style="--rd:.1s">
+          <span class="chrome-text">Embraiagens</span>
+          <span class="row-accent">de Competição</span>
+        </h1>
+        <p class="hero-tagline reveal" style="--rd:.2s">
+          20 anos de recuperação de peças auto. Resolvemos de forma profissional
+          todos os problemas relacionados com a embraiagem, bimassa ou monomassa
+          do seu automóvel — com garantia e responsabilidade.
+        </p>
+        <div class="hero-ctas reveal" style="--rd:.3s">
+          <a class="btn btn-primary" href="produtos.html">Ver Produtos</a>
+          <a class="btn btn-ghost" href="contactos.html">Contactar</a>
+        </div>
+        <div class="reveal" style="--rd:.4s">
+          <button class="explode-toggle" id="explode-toggle" type="button">
+            <span class="dot" aria-hidden="true"></span>
+            <span class="txt">Desmontar</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-scroll-hint" aria-hidden="true">
+        <span class="wheel"></span>
+        <span>Desmontar ao rolar</span>
+      </div>
+    </section>
+    </div><!-- /hero-pin -->
+
+    <!-- ============ ESTATÍSTICAS ============ -->
+    <section class="stats">
+      <div class="container stats-grid" data-stagger>
+        <div class="stat reveal">
+          <div class="num chrome-text" data-count="20" data-suffix="+">0</div>
+          <div class="lbl">Anos de experiência</div>
+        </div>
+        <div class="stat reveal">
+          <div class="num chrome-text" data-count="5" data-suffix="">0</div>
+          <div class="lbl">Serviços especializados</div>
+        </div>
+        <div class="stat reveal">
+          <div class="num chrome-text" data-count="12" data-suffix="+">0</div>
+          <div class="lbl">Gamas de produtos</div>
+        </div>
+        <div class="stat reveal">
+          <div class="num chrome-text" data-count="100" data-suffix="%">0</div>
+          <div class="lbl">Garantia</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVIÇOS (PREVIEW) ============ -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="section-no tech-label">01 — Serviços</p>
+          <h2 class="chrome-text">Recuperação de precisão</h2>
+          <p class="lead">Da embraiagem de competição à rectificação de tambores de travão — técnicos especializados e garantia em cada intervenção.</p>
+        </div>
+        <div class="svc-grid" data-stagger>
+          <article class="card card--featured reveal">
+            <span class="card-idx">S/01</span>
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/></svg>
+            </div>
+            <h3>Recuperação de peças auto</h3>
+            <p>O nosso serviço central: embraiagens simples, de competição e duplas com bimassa e de tractor. Cada conjunto é desmontado, verificado e reconstruído por técnicos especializados — com garantia TDE.</p>
+            <a class="card-link" href="servicos.html">Saber mais <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <span class="card-idx">S/02</span>
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="6.4" r="1"/><circle cx="16.8" cy="14.8" r="1"/><circle cx="7.2" cy="14.8" r="1"/></svg>
+            </div>
+            <h3>Rectificação de volantes de motor</h3>
+            <p>Tirar peso e calibrar volantes, bimassa ou monomassa, com rigor.</p>
+            <a class="card-link" href="servicos.html">Saber mais <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <span class="card-idx">S/03</span>
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8.5A9 9 0 0 1 20 8.5l-2.4 1.4a5.6 5.6 0 0 0-11.2 0L4 8.5z"/><path d="M4 15.5A9 9 0 0 0 20 15.5l-2.4-1.4a5.6 5.6 0 0 1-11.2 0L4 15.5z"/></svg>
+            </div>
+            <h3>Calços de travão</h3>
+            <p>Recuperação e revestimento de calços de travão para todo o tipo de viaturas.</p>
+            <a class="card-link" href="servicos.html">Saber mais <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <span class="card-idx">S/04</span>
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14c4-8 14-8 18 0"/><path d="M5 14h14M7 17h10" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Cintas de travão</h3>
+            <p>Vulcanização de cintas de travão e peças de fricção.</p>
+            <a class="card-link" href="servicos.html">Saber mais <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+          <article class="card reveal">
+            <span class="card-idx">S/05</span>
+            <div class="card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><path d="M12 5.5v13M5.5 12h13M7.4 7.4l9.2 9.2M16.6 7.4l-9.2 9.2"/></svg>
+            </div>
+            <h3>Rectificação de discos e tambores</h3>
+            <p>Rectificação de discos e tambores de travão com tolerâncias apertadas.</p>
+            <a class="card-link" href="servicos.html">Saber mais <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PRODUTOS EM DESTAQUE ============ -->
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="section-no tech-label">02 — Produtos</p>
+          <h2 class="chrome-text">Produtos em destaque</h2>
+          <p class="lead">Uma selecção da nossa gama — embraiagens, bimassa e componentes de fricção recuperados com garantia.</p>
+        </div>
+        <div class="product-grid" data-stagger>
+          <a class="product-card reveal" href="produtos.html">
+            <div class="product-media"><img src="assets/img/produtos/foto01_xl.jpg" alt="Kit completo de embraiagem com bimassa" loading="lazy"></div>
+            <div class="product-body">
+              <span class="tag">Bimassa</span>
+              <h3>Kit completo de embraiagem com bimassa</h3>
+              <p class="ref">REF. TDE-01</p>
+            </div>
+          </a>
+          <a class="product-card reveal" href="produtos.html">
+            <div class="product-media"><img src="assets/img/produtos/foto03_xl.jpg" alt="Disco de embraiagem reforçado" loading="lazy"></div>
+            <div class="product-body">
+              <span class="tag">Reforçado</span>
+              <h3>Disco de embraiagem reforçado</h3>
+              <p class="ref">REF. TDE-03</p>
+            </div>
+          </a>
+          <a class="product-card reveal" href="produtos.html">
+            <div class="product-media"><img src="assets/img/produtos/foto11_xl.jpg" alt="Discos de embraiagem de competição" loading="lazy"></div>
+            <div class="product-body">
+              <span class="tag">Competição</span>
+              <h3>Discos de embraiagem de competição</h3>
+              <p class="ref">REF. TDE-11</p>
+            </div>
+          </a>
+          <a class="product-card reveal" href="produtos.html">
+            <div class="product-media"><img src="assets/img/produtos/foto06_xl.jpg" alt="Embraiagem de tractor" loading="lazy"></div>
+            <div class="product-body">
+              <span class="tag">Tractor</span>
+              <h3>Embraiagem de tractor</h3>
+              <p class="ref">REF. TDE-06</p>
+            </div>
+          </a>
+        </div>
+        <div style="text-align:center;margin-top:2.6rem" class="reveal">
+          <a class="btn btn-ghost" href="produtos.html">Ver todos os produtos</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Embraiagens</span><span class="solid">·</span><span>Travões</span><span class="solid">·</span><span>Discos</span><span class="solid">·</span><span>Bimassa</span><span class="solid">·</span><span>Competição</span><span class="solid">·</span>
+        <span>Embraiagens</span><span class="solid">·</span><span>Travões</span><span class="solid">·</span><span>Discos</span><span class="solid">·</span><span>Bimassa</span><span class="solid">·</span><span>Competição</span><span class="solid">·</span>
+      </div>
+    </div>
+
+    <!-- ============ CTA ============ -->
+    <section class="section cta-band">
+      <div class="container">
+        <p class="tech-label reveal">Aconselhamento técnico</p>
+        <h2 class="chrome-text reveal" style="--rd:.08s;margin-top:.8rem">Precisa de aconselhamento?<br>Fale connosco.</h2>
+        <p class="reveal" style="--rd:.16s">Temos técnicos capazes de o aconselhar sobre a embraiagem apropriada — seja para competição, uso profissional, amador ou para aguentar modificações do dia-a-dia.</p>
+        <div class="reveal" style="--rd:.24s">
+          <a class="btn btn-primary" href="contactos.html">Contactar a TDE</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html">
+          <span class="brand-mark">TDE</span>
+          <span class="brand-sub">Travões · Discos · Embraiagens</span>
+        </a>
+        <p>Vinte anos de experiência em recuperação de peças auto, com garantia e responsabilidade.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Navegação</h4>
+        <ul>
+          <li><a href="index.html">Início</a></li>
+          <li><a href="empresa.html">Empresa</a></li>
+          <li><a href="servicos.html">Serviços</a></li>
+          <li><a href="produtos.html">Produtos</a></li>
+          <li><a href="contactos.html">Contactos</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contactos</h4>
+        <ul>
+          <li>Rua Eng. Ezequiel Campos, 340<br>Zona Industrial do Porto<br>4100-288 Porto</li>
+          <li><a href="tel:+351228301710">Tel: 228 301 710</a></li>
+          <li>Fax: 228 301 732</li>
+          <li><a href="mailto:geral@tde.com.pt">geral@tde.com.pt</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>© 2025 TDE — Travões, Discos e Embraiagens, Lda.</span>
+      <span>Zona Industrial do Porto</span>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js" defer></script>
+  <script type="module" src="assets/js/clutch.js"></script>
+</body>
+</html>
