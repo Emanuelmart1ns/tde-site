@@ -163,13 +163,22 @@ function createClutch(canvas) {
   let wheelExplode = 0;       // alvo definido pela roda durante arrasto
   let wheelOverride = false;  // roda durante arrasto ignora o scroll
 
-  /* Fix: a animação de pin só acontece uma vez por sessão.
-     Fail-safe para a versão ESTÁTICA se sessionStorage não estiver disponível. */
-  let heroSeen = true;
-  try {
-    heroSeen = sessionStorage.getItem("tde-hero-seen") === "1";
-  } catch (e) { heroSeen = true; }
-  const pinActive = isHero && !heroSeen;
+  /* A animação de pin corre na primeira chegada ao home e em reloads (F5 /
+     hard refresh). Não corre quando se volta de outra página do site
+     (referrer same-origin) ou via botão voltar/avançar. Sem sessionStorage:
+     este sobrevive a hard refreshes e impedia a animação para sempre. */
+  function shouldPin() {
+    if (!isHero) return false;
+    const navEntries = performance.getEntriesByType("navigation");
+    const navType = navEntries.length ? navEntries[0].type : "navigate";
+    if (navType === "reload") return true;
+    if (navType === "back_forward") return false;
+    try {
+      return !(document.referrer &&
+        new URL(document.referrer).origin === location.origin);
+    } catch (e) { return true; }
+  }
+  const pinActive = shouldPin();
 
   const rot = { x: 0, y: 0 }; // pose de repouso frontal (texturas rectificadas)
   const vel = { x: 0, y: 0 };
@@ -203,12 +212,7 @@ function createClutch(canvas) {
   const toggleBtn = isHero ? document.getElementById("explode-toggle") : null;
   const toggleTxt = toggleBtn ? toggleBtn.querySelector(".txt") : null;
 
-  /* Marcar o hero como visto nesta sessão (uma vez montado) */
-  if (isHero) {
-    try { sessionStorage.setItem("tde-hero-seen", "1"); } catch (e) { /* modo privado */ }
-  }
-
-  /* Modo sem pin (sessão já viu a animação): colapsar a zona de 350vh */
+  /* Modo sem pin (regresso de outra página do site): colapsar a zona de 350vh */
   if (isHero && !pinActive && heroPin) {
     heroPin.classList.add("no-pin");
     if (scrollHint) scrollHint.style.display = "none";
