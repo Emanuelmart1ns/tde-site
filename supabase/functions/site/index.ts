@@ -19,11 +19,6 @@ const MIME: Record<string, string> = {
 
 Deno.serve(async (req) => {
   const url = new URL(req.url);
-  if (url.searchParams.get("__test") === "1") {
-    return new Response("<b>ok</b>", {
-      headers: { "Content-Type": "text/html; charset=utf-8" },
-    });
-  }
   // strip the /functions/v1/site prefix (and bare /site for custom domains)
   let path = url.pathname.replace(/^\/functions\/v1\/site/, "").replace(/^\/site/, "");
   path = path.replace(/^\//, "");
