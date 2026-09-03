@@ -537,6 +537,58 @@ body.nav-open .nav-toggle span:nth-child(3) { top: 21px; transform: rotate(-45de
   .hero-labels { display: none; }
 }
 
+/* Estado de carregamento do modelo 3D */
+.clutch-loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+  font-family: var(--font-tech);
+  font-size: 0.62rem;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  pointer-events: none;
+  animation: clutch-load-pulse 1.6s ease-in-out infinite;
+}
+@keyframes clutch-load-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 1; }
+}
+
+/* Ficha de função da peça (hover no estado explodido) */
+.part-card {
+  position: absolute;
+  z-index: 5;
+  max-width: 268px;
+  padding: 0.85rem 1.05rem;
+  background: rgba(8, 11, 20, 0.78);
+  border: 1px solid rgba(34, 211, 238, 0.35);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55), inset 0 0 18px rgba(34, 211, 238, 0.05);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s var(--ease-out);
+}
+.part-card.on { opacity: 1; transform: none; }
+.part-card .pc-name {
+  display: block;
+  font-family: var(--font-tech);
+  font-size: 0.6rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.part-card .pc-desc {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
 /* ---------- Stats strip ---------- */
 .stats {
   position: relative;

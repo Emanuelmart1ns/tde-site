@@ -1,37 +1,38 @@
 /* ==========================================================================
-   TDE — Embraiagem 3D (assemblagem real com espessura)
+   TDE — Embraiagem 3D (modelo Blender: assets/models/clutch.glb)
    - Hero (data-clutch-mode="hero"): explode fixado ao scroll (pin 350vh),
-     rotação por arrasto com inércia, etiquetas projectadas.
+     rotação por arrasto com inércia, roda-durante-arrasto, etiquetas
+     projectadas e ficha de função ao pairar sobre cada peça (explodido).
    - Ambiente (data-clutch-mode="ambient"): montada, auto-rotação lenta.
+   GLB Y-up: eixo da pilha = +Y; origens das peças em Y = 0 / 0.5 / 0.7 / 0.85.
    ========================================================================== */
 
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-/* Cada camada: textura (face frontal) + corpo cilíndrico cromado.
-   Texturas "-flat": rectificadas para vista PURAMENTE FRONTAL, centradas em
-   512,512 no canvas 1024². Raios dos corpos = raio real da textura:
-   z0 397px, z1 422px, z2 175px, z3 313px (z1 = unidade 1.0).
-   d = espessura, rBack = raio traseiro (cone suave). */
-const PARTS = [
-  { tex: "assets/img/layer-z0-flat.png", r: 0.94, d: 0.55, rBack: 0.94 },  // disco base
-  { tex: "assets/img/layer-z1-flat.png", r: 1.0, d: 0.35, rBack: 1.0 },
-  { tex: "assets/img/layer-z2-flat.png", r: 0.415, d: 0.25, rBack: 0.5 },
-  { tex: "assets/img/layer-z3-flat.png", r: 0.74, d: 0.2, rBack: 0.74 },
-];
-/* Plano da face: textura 1024² completa, de extremo a extremo — preserva o
-   alinhamento entre camadas. Metade do plano = 512px equivale ao raio de z1. */
-const FACE_SIZE = 2 * (512 / 422);
-const ASSEMBLE_STEP = 0.035; // folga mínima quando montado
-const EXPLODE_GAP = 1.05;    // afastamento por camada ao desmontar
+const MODEL_URL = "assets/models/clutch.glb";
+const PART_NAMES = ["part_z0_disc", "part_z1_housing", "part_z2_diaphragm", "part_z3_cover"];
+const PART_Y = [0, 0.5, 0.7, 0.85];          // origens no GLB (montado)
+const EXPLODE_OFF = [0, 0.45, 0.95, 1.55];   // afastamento ao desmontar
+const PART_R = [0.95, 1.0, 0.42, 0.74];      // raios exteriores (metade do diâmetro)
 const CAM_Z = 6.4;
 
-/* Etiquetas (hero): camada, ângulo/comprimento da linha-guia, âncora local. */
+/* Etiquetas (hero): camada, ângulo/comprimento da linha-guia, âncora no
+   espaço local da peça (Y = eixo da pilha; XZ = plano radial). */
 const LABELS = [
-  { sel: '[data-part="z3"]', layer: 3, angle: -115, len: 100, anchor: [0.45, 0.78] },
-  { sel: '[data-part="z2"]', layer: 2, angle: 30, len: 86, anchor: [0.85, -0.45] },
-  { sel: '[data-part="z1"]', layer: 1, angle: 208, len: 86, anchor: [-0.85, 0.3] },
-  { sel: '[data-part="z0"]', layer: 0, angle: 152, len: 92, anchor: [-0.72, -0.55] },
+  { sel: '[data-part="z3"]', layer: 3, angle: -115, len: 100, anchor: [0.55, 0, 0.45] },
+  { sel: '[data-part="z2"]', layer: 2, angle: 30, len: 86, anchor: [0.34, 0, -0.28] },
+  { sel: '[data-part="z1"]', layer: 1, angle: 208, len: 86, anchor: [-0.75, 0, 0.3] },
+  { sel: '[data-part="z0"]', layer: 0, angle: 152, len: 92, anchor: [-0.68, 0, -0.45] },
+];
+
+/* Fichas de função (hover) */
+const PART_INFO = [
+  { name: "Disco de Embraiagem", desc: "Transmite o binário do motor à caixa de velocidades. As molas de amortecimento absorvem as vibrações e protegem a transmissão." },
+  { name: "Carcaça Cromada", desc: "Estrutura que une todo o conjunto ao volante do motor e aloja o círculo de parafusos de fixação." },
+  { name: "Mola de Diafragma", desc: "Aplica a pressão que mantém o disco contra o volante. É ela que define o esforço do pedal de embraiagem." },
+  { name: "Placa de Pressão — Race Pro 1000", desc: "Comprime o disco contra o volante para transmitir a potência. Afasta-se quando o pedal é pressionado." },
 ];
 
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
@@ -49,7 +50,7 @@ function createClutch(canvas) {
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.25;
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
@@ -61,60 +62,69 @@ function createClutch(canvas) {
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
   /* Luzes subtis para modelar o cromado */
-  const key = new THREE.DirectionalLight(0xffffff, 0.7);
+  const key = new THREE.DirectionalLight(0xffffff, 1.0);
   key.position.set(3, 4, 5);
   scene.add(key);
-  const rim = new THREE.PointLight(0x22d3ee, 14, 30);
+  const fill = new THREE.PointLight(0xeef2f8, 18, 30);
+  fill.position.set(1.5, 2.5, 5.5);
+  scene.add(fill);
+  const rim = new THREE.PointLight(0x22d3ee, 5, 30);
   rim.position.set(-4.5, 1.5, -2.5);
   scene.add(rim);
 
-  const group = new THREE.Group();
+  const group = new THREE.Group();        // interacção (rotação/posição)
   scene.add(group);
+  const modelGroup = new THREE.Group();   // orientação do modelo: +Y → +Z
+  modelGroup.rotation.x = Math.PI / 2;
+  group.add(modelGroup);
 
-  /* --- Construir as 4 peças --- */
-  const loader = new THREE.TextureLoader();
-  const chromeMat = new THREE.MeshStandardMaterial({
-    color: 0xb9c0cb,
-    metalness: 1,
-    roughness: 0.22,
-    envMapIntensity: 1.1,
-    side: THREE.DoubleSide,
-  });
-  const parts = [];
-  PARTS.forEach((cfg, i) => {
-    const part = new THREE.Group();
+  /* --- Estado de carregamento --- */
+  const loadingEl = document.createElement("div");
+  loadingEl.className = "clutch-loading";
+  loadingEl.textContent = "A carregar 3D…";
+  (canvas.parentElement || document.body).appendChild(loadingEl);
 
-    // Corpo: cilindro aberto com o eixo ao longo da vista (z) — as zonas
-    // transparentes das faces deixam ver as camadas atrás (como no conjunto real)
-    const body = new THREE.Mesh(
-      new THREE.CylinderGeometry(cfg.r, cfg.rBack, cfg.d, 96, 1, true),
-      chromeMat
-    );
-    body.rotation.x = Math.PI / 2;
-    body.position.z = -(cfg.d / 2 + 0.004);
-    part.add(body);
+  /* --- Carregar o GLB --- */
+  const parts = [];              // raízes part_z0..z3
+  const partMats = [[], [], [], []]; // materiais clonados por peça (hover)
+  const proxies = [];            // cilindros invisíveis para raycast
+  let modelReady = false;
 
-    // Face: plano com a textura fotográfica transparente (visível dos dois lados)
-    const tex = loader.load(cfg.tex);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
-    const face = new THREE.Mesh(
-      new THREE.PlaneGeometry(FACE_SIZE, FACE_SIZE),
-      new THREE.MeshBasicMaterial({
-        map: tex,
-        transparent: true,
-        alphaTest: 0.02,
-        depthWrite: false,
-        toneMapped: false,
-        side: THREE.DoubleSide,
-      })
-    );
-    face.renderOrder = 10 + i;
-    part.add(face);
+  new GLTFLoader().load(
+    MODEL_URL,
+    (gltf) => {
+      const root = gltf.scene;
+      modelGroup.add(root);
 
-    group.add(part);
-    parts.push(part);
-  });
+      PART_NAMES.forEach((name, i) => {
+        const part = root.getObjectByName(name);
+        if (!part) return;
+        part.userData.spinV = 0;
+        part.userData.lift = 1;
+        // Clonar materiais por peça (o hover acende emissive só nessa peça)
+        part.traverse((o) => {
+          if (o.isMesh) {
+            o.material = o.material.clone();
+            if (o.material.metalness > 0.85) o.material.envMapIntensity = 2.1;
+            partMats[i].push(o.material);
+          }
+        });
+        // Proxy invisível para o raycast do hover (178k tris seriam caros)
+        const proxy = new THREE.Mesh(
+          new THREE.CylinderGeometry(PART_R[i], PART_R[i], 0.45, 24),
+          new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false, transparent: true })
+        );
+        part.add(proxy);
+        proxies.push(proxy);
+        parts[i] = part;
+      });
+
+      modelReady = true;
+      loadingEl.remove();
+    },
+    undefined,
+    () => { loadingEl.textContent = "Modelo 3D indisponível"; }
+  );
 
   /* --- Anel cianeto + partículas para profundidade --- */
   const ring = new THREE.Mesh(
@@ -180,7 +190,7 @@ function createClutch(canvas) {
   }
   const pinActive = shouldPin();
 
-  const rot = { x: 0, y: 0 }; // pose de repouso frontal (texturas rectificadas)
+  const rot = { x: 0, y: 0 }; // pose de repouso frontal
   const vel = { x: 0, y: 0 };
   let dragging = false;
   let lastPointer = { x: 0, y: 0 };
@@ -188,6 +198,32 @@ function createClutch(canvas) {
   let running = true;
   let onScreen = true;
   const clock = new THREE.Clock();
+
+  /* --- Hover por peça (hero, estado explodido) --- */
+  const raycaster = new THREE.Raycaster();
+  const pointerNDC = new THREE.Vector2();
+  let pointerActive = false; // só fazer raycast depois de o rato entrar no canvas
+  let hoverIdx = -1;       // rato
+  let tapIdx = -1;         // toque (alterna)
+  let downPos = null;      // para distinguir toque de arrasto
+  const pointerClient = { x: 0, y: 0 };
+
+  /* Ficha de função que segue o cursor */
+  const card = isHero ? document.createElement("div") : null;
+  if (card) {
+    card.className = "part-card";
+    card.innerHTML = '<span class="pc-name"></span><p class="pc-desc"></p>';
+    (canvas.closest(".hero") || document.body).appendChild(card);
+  }
+  function setCard(i, x, y) {
+    if (!card) return;
+    if (i < 0) { card.classList.remove("on"); return; }
+    card.querySelector(".pc-name").textContent = PART_INFO[i].name;
+    card.querySelector(".pc-desc").textContent = PART_INFO[i].desc;
+    card.style.left = Math.min(x + 22, window.innerWidth - 290) + "px";
+    card.style.top = Math.max(y - 96, 12) + "px";
+    card.classList.add("on");
+  }
 
   /* --- Etiquetas (hero) --- */
   const labelEls = isHero
@@ -252,8 +288,19 @@ function createClutch(canvas) {
   if (isHero) {
     canvas.style.touchAction = "pan-y";
     canvas.style.cursor = "grab";
+
+    const updateNDC = (e) => {
+      pointerActive = true;
+      const r = canvas.getBoundingClientRect();
+      pointerNDC.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+      pointerNDC.y = -((e.clientY - r.top) / r.height) * 2 + 1;
+      pointerClient.x = e.clientX;
+      pointerClient.y = e.clientY;
+    };
+
     canvas.addEventListener("pointerdown", (e) => {
       dragging = true;
+      downPos = { x: e.clientX, y: e.clientY, type: e.pointerType };
       lastPointer = { x: e.clientX, y: e.clientY };
       vel.x = vel.y = 0;
       wheelOverride = false;
@@ -261,8 +308,10 @@ function createClutch(canvas) {
       canvas.style.cursor = "grabbing";
       canvas.setPointerCapture(e.pointerId);
       lastInteract = clock.getElapsedTime();
+      updateNDC(e);
     });
     canvas.addEventListener("pointermove", (e) => {
+      updateNDC(e);
       if (!dragging) return;
       const dx = e.clientX - lastPointer.x;
       const dy = e.clientY - lastPointer.y;
@@ -288,11 +337,22 @@ function createClutch(canvas) {
       },
       { passive: false, capture: true }
     );
-    const endDrag = () => {
+    const endDrag = (e) => {
       if (!dragging) return;
       dragging = false;
       canvas.style.cursor = "grab";
       lastInteract = clock.getElapsedTime();
+      /* Toque (sem arrastar): alternar a ficha da peça tocada */
+      if (e && downPos && downPos.type === "touch" &&
+          Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) < 10 &&
+          explode > 0.6 && modelReady) {
+        updateNDC(e);
+        raycaster.setFromCamera(pointerNDC, camera);
+        const hit = raycaster.intersectObjects(proxies, false)[0];
+        tapIdx = hit ? proxies.indexOf(hit.object) : -1;
+        if (tapIdx === -1) setCard(-1);
+      }
+      downPos = null;
       /* Reconciliar ao largar: rolar a página para a posição correspondente
          ao explode definido pela roda (modo pin), para o estado ficar coerente */
       if (wheelOverride) {
@@ -311,6 +371,7 @@ function createClutch(canvas) {
     };
     canvas.addEventListener("pointerup", endDrag);
     canvas.addEventListener("pointercancel", endDrag);
+    canvas.addEventListener("pointerleave", () => { pointerActive = false; hoverIdx = -1; if (tapIdx < 0) setCard(-1); });
   }
 
   /* --- Pausar fora do ecrã / separador oculto --- */
@@ -357,24 +418,29 @@ function createClutch(canvas) {
   function frame() {
     requestAnimationFrame(frame);
     if (!running || !onScreen) return;
-    const t = clock.getElapsedTime();
+    const dt = Math.min(clock.getDelta(), 0.1);
+    const t = clock.elapsedTime;
 
-    /* Explosão suavizada: roda-durante-arrasto > pin por scroll > botão */
+    /* Explosão suavizada (independente do frame-rate):
+       roda-durante-arrasto > pin por scroll > botão */
     let target = 0;
     if (isHero) {
       if (wheelOverride) target = wheelExplode;
       else if (pinActive) target = scrollTarget;
       else target = manualExplode;
     }
-    explode += (target - explode) * 0.14;
+    explode += (target - explode) * (1 - Math.exp(-dt * 9));
     canvas.dataset.explode = explode.toFixed(3);
     if (Math.abs(target - explode) < 0.0005) explode = target;
 
-    parts.forEach((p, i) => {
-      p.position.z = i * (ASSEMBLE_STEP + explode * EXPLODE_GAP);
-    });
-    // Recentrar o conjunto ao expandir
-    group.position.z = -explode * (3 * EXPLODE_GAP) / 2;
+    if (modelReady) {
+      parts.forEach((p, i) => {
+        if (!p) return;
+        p.position.y = PART_Y[i] + explode * EXPLODE_OFF[i];
+      });
+      // Recentrar o conjunto ao expandir (eixo local +Y = eixo da pilha)
+      modelGroup.position.y = -(PART_Y[3] + explode * EXPLODE_OFF[3]) / 2;
+    }
 
     /* Rotação: arrasto + inércia; auto-rotação lenta em repouso */
     if (isHero) {
@@ -384,19 +450,23 @@ function createClutch(canvas) {
         rot.x = clamp(rot.x + vel.x, -xClamp, xClamp);
         vel.x *= 0.94;
         vel.y *= 0.94;
-        if (t - lastInteract > 2.5) rot.y += 0.0018;
+        if (t - lastInteract > 2.5 && hoverIdx < 0 && tapIdx < 0) rot.y += 0.0018;
       }
     } else {
       rot.y += 0.0022;
       rot.x = Math.sin(t * 0.3) * 0.06; // oscilação suave centrada no frontal
     }
-    group.rotation.x = rot.x;
-    group.rotation.y = rot.y;
+    /* Ao desmontar, inclinação extra para evidenciar a separação da pilha */
+    group.rotation.x = rot.x + explode * 0.08;
+    group.rotation.y = rot.y + explode * 0.42;
 
-    /* Flutuação + "respiração" */
-    group.position.y = group.userData.baseY + Math.sin(t * 0.75) * 0.05;
-    group.scale.setScalar(group.userData.baseScale * (1 + Math.sin(t * 0.55) * 0.012));
-    group.position.x = baseX - (isHero ? explode * 0.85 : 0);
+    /* Flutuação + "respiração"; ao desmontar, afastar/encolher ligeiramente
+       para o conjunto expandido caber em ecrã */
+    group.position.y = group.userData.baseY + Math.sin(t * 0.75) * 0.05
+      + (isHero ? explode * 0.5 : 0);
+    group.scale.setScalar(group.userData.baseScale * (1 + Math.sin(t * 0.55) * 0.012)
+      * (isHero ? 1 - explode * 0.2 : 1));
+    group.position.x = baseX - (isHero ? explode * 0.9 : 0);
     ring.position.x = group.position.x;
 
     ring.rotation.z = t * 0.12;
@@ -414,8 +484,47 @@ function createClutch(canvas) {
       if (scrollHint) scrollHint.style.opacity = clamp(1 - explode * 4, 0, 1).toFixed(3);
     }
 
+    /* --- Hover por peça (explodido, sem arrastar) --- */
+    let selected = -1;
+    if (isHero && modelReady && explode > 0.6) {
+      if (!dragging && pointerActive) {
+        raycaster.setFromCamera(pointerNDC, camera);
+        const hit = raycaster.intersectObjects(proxies, false)[0];
+        hoverIdx = hit ? proxies.indexOf(hit.object) : -1;
+      }
+      selected = tapIdx >= 0 ? tapIdx : hoverIdx;
+      parts.forEach((p, i) => {
+        if (!p) return;
+        const on = i === selected;
+        p.userData.spinV += ((on ? 0.02 : 0) - p.userData.spinV) * 0.06;
+        p.rotation.y += p.userData.spinV;
+        p.userData.lift += ((on ? 1.05 : 1) - p.userData.lift) * 0.1;
+        p.scale.setScalar(p.userData.lift);
+        const eTarget = on ? 0.16 : 0;
+        partMats[i].forEach((m) => {
+          m.emissive.setHex(0x22d3ee);
+          m.emissiveIntensity += (eTarget - m.emissiveIntensity) * 0.12;
+        });
+      });
+      if (!dragging) canvas.style.cursor = selected >= 0 ? "pointer" : "grab";
+      if (selected >= 0) setCard(selected, pointerClient.x, pointerClient.y);
+      else if (tapIdx < 0) setCard(-1);
+    } else if (isHero) {
+      if (hoverIdx >= 0 || tapIdx >= 0) { hoverIdx = -1; tapIdx = -1; setCard(-1); }
+      if (modelReady) {
+        parts.forEach((p, i) => {
+          if (!p) return;
+          p.userData.spinV += (0 - p.userData.spinV) * 0.06;
+          p.rotation.y += p.userData.spinV;
+          p.userData.lift += (1 - p.userData.lift) * 0.1;
+          p.scale.setScalar(p.userData.lift);
+          partMats[i].forEach((m) => { m.emissiveIntensity *= 0.9; });
+        });
+      }
+    }
+
     /* Etiquetas projectadas para o ecrã (escondidas quando a peça está de costas) */
-    if (isHero && labelEls.length) {
+    if (isHero && labelEls.length && modelReady) {
       const w = renderer.domElement.clientWidth;
       const h = renderer.domElement.clientHeight;
       const labelAlpha = clamp((explode - 0.6) / 0.15, 0, 1);
@@ -423,11 +532,12 @@ function createClutch(canvas) {
       const facing = new THREE.Vector3();
       labelEls.forEach(({ el, layer, anchor }) => {
         const part = parts[layer];
-        part.localToWorld(v.set(anchor[0], anchor[1], 0)).project(camera);
+        if (!part) return;
+        part.localToWorld(v.set(anchor[0], anchor[1], anchor[2])).project(camera);
         const x = (v.x * 0.5 + 0.5) * w;
         const y = (-v.y * 0.5 + 0.5) * h;
-        // 1 quando a face da peça aponta para a câmara
-        facing.set(0, 0, 1).applyQuaternion(part.getWorldQuaternion(new THREE.Quaternion()));
+        // 1 quando a frente da peça (+Y local) aponta para a câmara
+        facing.set(0, 1, 0).applyQuaternion(part.getWorldQuaternion(new THREE.Quaternion()));
         const front = clamp(facing.z * 1.6, 0, 1);
         el.style.transform = `translate(${x}px, ${y}px)`;
         el.style.opacity = (labelAlpha * front).toFixed(3);
