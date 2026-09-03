@@ -57,9 +57,29 @@ function createClutch(canvas) {
   const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 60);
   camera.position.set(0, 0, CAM_Z);
 
-  /* --- Ambiente (reflexos cromados) sem ficheiros externos --- */
+  /* --- Ambiente de estúdio (reflexos cromados) sem ficheiros externos ---
+     Softboxes brilhantes sobre fundo negro: são as riscas claras longas que
+     fazem o cromado "de carro" estalar, em vez do cinza galvanizado. */
+  const envScene = new THREE.Scene();
+  envScene.background = new THREE.Color(0x020204);
+  const softbox = (w, h, x, y, z, ry, rx, intensity) => {
+    const m = new THREE.Mesh(
+      new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial()
+    );
+    m.material.color.setScalar(intensity); // HDR: >1 = reflexo estalante
+    m.position.set(x, y, z);
+    m.rotation.set(rx, ry, 0);
+    envScene.add(m);
+  };
+  softbox(5, 14, -9, 2, 0, Math.PI / 2, 0, 6);        // risca esquerda
+  softbox(5, 14, 9, 2, 0, -Math.PI / 2, 0, 6);        // risca direita
+  softbox(12, 7, 0, 9, 1, 0, -Math.PI / 2.2, 5);      // softbox superior
+  softbox(11, 5, 0, -8, 4, 0, Math.PI / 3, 2.5);      // fill inferior
+  softbox(4, 12, 0, 3, -10, 0, 0, 4);                 // risca traseira
+  softbox(15, 10, 0, 1, 11, Math.PI, 0, 3.2);         // frontal (atrás da câmara)
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environment = pmrem.fromScene(envScene, 0.04).texture;
 
   /* Luzes subtis para modelar o cromado */
   const key = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -105,7 +125,12 @@ function createClutch(canvas) {
         part.traverse((o) => {
           if (o.isMesh) {
             o.material = o.material.clone();
-            if (o.material.metalness > 0.85) o.material.envMapIntensity = 2.1;
+            /* Cromado espelho: placa frontal (z3) quase sem rugosidade,
+               restantes metais com brilho alto */
+            if (o.material.metalness > 0.85) {
+              if (o.material.roughness > 0.05) o.material.roughness = 0.05;
+              o.material.envMapIntensity = i === 3 ? 2.8 : 2.1;
+            }
             partMats[i].push(o.material);
           }
         });
@@ -125,19 +150,6 @@ function createClutch(canvas) {
     undefined,
     () => { loadingEl.textContent = "Modelo 3D indisponível"; }
   );
-
-  /* --- Anel cianeto + partículas para profundidade --- */
-  const ring = new THREE.Mesh(
-    new THREE.TorusGeometry(1.95, 0.006, 8, 160),
-    new THREE.MeshBasicMaterial({
-      color: 0x22d3ee,
-      transparent: true,
-      opacity: isHero ? 0.22 : 0.14,
-    })
-  );
-  ring.position.z = -1.3;
-  ring.rotation.x = Math.PI * 0.42;
-  scene.add(ring);
 
   let particles = null;
   if (isHero) {
@@ -247,6 +259,43 @@ function createClutch(canvas) {
   const scrollHint = isHero ? document.querySelector(".hero-scroll-hint") : null;
   const toggleBtn = isHero ? document.getElementById("explode-toggle") : null;
   const toggleTxt = toggleBtn ? toggleBtn.querySelector(".txt") : null;
+
+  /* --- Intro lock: hero bloqueado até clicar em "Continuar" ---
+     Sem tocar no overflow do documento (quebra o position:sticky do pin):
+     interceptamos wheel/touch/teclas e forçamos scrollY=0. Canvas sem
+     interação, explode fixo em 0. Ao clicar, desbloqueia para esta visita. */
+  const continueBtn = isHero ? document.getElementById("hero-continue") : null;
+  let introActive = false;
+  if (isHero && pinActive && continueBtn) {
+    introActive = true;
+    continueBtn.hidden = false;
+    canvas.style.pointerEvents = "none";
+    if (scrollHint) scrollHint.style.display = "none";
+    if (toggleBtn) toggleBtn.style.opacity = "0.35";
+
+    const block = (e) => { e.preventDefault(); };
+    const blockKeys = (e) => {
+      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"]
+        .includes(e.key) && e.target === document.body) e.preventDefault();
+    };
+    const scrollGuard = () => { if (window.scrollY !== 0) window.scrollTo(0, 0); };
+    window.addEventListener("wheel", block, { passive: false });
+    window.addEventListener("touchmove", block, { passive: false });
+    window.addEventListener("keydown", blockKeys);
+    window.addEventListener("scroll", scrollGuard);
+
+    continueBtn.addEventListener("click", () => {
+      introActive = false;
+      continueBtn.hidden = true;
+      canvas.style.pointerEvents = "";
+      if (scrollHint) scrollHint.style.display = "";
+      if (toggleBtn) toggleBtn.style.opacity = "";
+      window.removeEventListener("wheel", block);
+      window.removeEventListener("touchmove", block);
+      window.removeEventListener("keydown", blockKeys);
+      window.removeEventListener("scroll", scrollGuard);
+    }, { once: true });
+  }
 
   /* Modo sem pin (regresso de outra página do site): colapsar a zona de 350vh */
   if (isHero && !pinActive && heroPin) {
@@ -406,7 +455,6 @@ function createClutch(canvas) {
       group.userData.baseScale = 0.9;
     }
     group.position.x = baseX;
-    ring.position.x = baseX;
   }
   window.addEventListener("resize", resize);
   resize();
@@ -426,7 +474,7 @@ function createClutch(canvas) {
     let target = 0;
     if (isHero) {
       if (wheelOverride) target = wheelExplode;
-      else if (pinActive) target = scrollTarget;
+      else if (pinActive) target = introActive ? 0 : scrollTarget;
       else target = manualExplode;
     }
     explode += (target - explode) * (1 - Math.exp(-dt * 9));
@@ -467,9 +515,7 @@ function createClutch(canvas) {
     group.scale.setScalar(group.userData.baseScale * (1 + Math.sin(t * 0.55) * 0.012)
       * (isHero ? 1 - explode * 0.2 : 1));
     group.position.x = baseX - (isHero ? explode * 0.9 : 0);
-    ring.position.x = group.position.x;
 
-    ring.rotation.z = t * 0.12;
     if (particles) particles.rotation.z = t * 0.03;
 
     /* Conteúdo do hero esbate-se com o progresso */
