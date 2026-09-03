@@ -1180,9 +1180,16 @@ body.nav-open .nav-toggle span:nth-child(3) { top: 21px; transform: rotate(-45de
   body::after { animation: none; }
 }
 
-/* Botão Continuar do intro lock */
+/* Botão Continuar do intro lock — fixo no viewport, impossível de perder */
 .btn-continue {
-  margin-top: 1.1rem;
+  position: fixed;
+  left: 50%;
+  bottom: 6vh;
+  translate: -50% 0;
+  z-index: 70;
+  margin-top: 0;
+  padding: 1rem 2.6rem;
+  font-size: 1rem;
   animation: continue-pulse 2.4s ease-in-out infinite;
 }
 @keyframes continue-pulse {
