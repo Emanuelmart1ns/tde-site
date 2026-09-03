@@ -260,41 +260,17 @@ function createClutch(canvas) {
   const toggleBtn = isHero ? document.getElementById("explode-toggle") : null;
   const toggleTxt = toggleBtn ? toggleBtn.querySelector(".txt") : null;
 
-  /* --- Intro lock: hero bloqueado até clicar em "Continuar" ---
-     Sem tocar no overflow do documento (quebra o position:sticky do pin):
-     interceptamos wheel/touch/teclas e forçamos scrollY=0. Canvas sem
-     interação, explode fixo em 0. Ao clicar, desbloqueia para esta visita. */
+  /* --- Botão Continuar: salta o fim da expansão e larga o hero ---
+     Sem lock à entrada: o scroll expande desde o primeiro momento. O botão
+     fica visível enquanto o pin está ativo e a expansão não chegou ao fim;
+     clicar leva a página ao fim da zona de pin (explode completo). */
   const continueBtn = isHero ? document.getElementById("hero-continue") : null;
-  let introActive = false;
-  if (isHero && pinActive && continueBtn) {
-    introActive = true;
+  if (isHero && pinActive && continueBtn && heroPin) {
     continueBtn.hidden = false;
-    canvas.style.pointerEvents = "none";
-    if (scrollHint) scrollHint.style.display = "none";
-    if (toggleBtn) toggleBtn.style.opacity = "0.35";
-
-    const block = (e) => { e.preventDefault(); };
-    const blockKeys = (e) => {
-      if (["ArrowDown", "ArrowUp", "PageDown", "PageUp", " ", "Home", "End"]
-        .includes(e.key) && e.target === document.body) e.preventDefault();
-    };
-    const scrollGuard = () => { if (window.scrollY !== 0) window.scrollTo(0, 0); };
-    window.addEventListener("wheel", block, { passive: false });
-    window.addEventListener("touchmove", block, { passive: false });
-    window.addEventListener("keydown", blockKeys);
-    window.addEventListener("scroll", scrollGuard);
-
     continueBtn.addEventListener("click", () => {
-      introActive = false;
-      continueBtn.hidden = true;
-      canvas.style.pointerEvents = "";
-      if (scrollHint) scrollHint.style.display = "";
-      if (toggleBtn) toggleBtn.style.opacity = "";
-      window.removeEventListener("wheel", block);
-      window.removeEventListener("touchmove", block);
-      window.removeEventListener("keydown", blockKeys);
-      window.removeEventListener("scroll", scrollGuard);
-    }, { once: true });
+      const range = heroPin.offsetHeight - window.innerHeight;
+      window.scrollTo({ top: heroPin.offsetTop + range, behavior: "smooth" });
+    });
   }
 
   /* Modo sem pin (regresso de outra página do site): colapsar a zona de 350vh */
@@ -474,7 +450,7 @@ function createClutch(canvas) {
     let target = 0;
     if (isHero) {
       if (wheelOverride) target = wheelExplode;
-      else if (pinActive) target = introActive ? 0 : scrollTarget;
+      else if (pinActive) target = scrollTarget;
       else target = manualExplode;
     }
     explode += (target - explode) * (1 - Math.exp(-dt * 9));
@@ -521,6 +497,8 @@ function createClutch(canvas) {
     /* Conteúdo do hero esbate-se com o progresso */
     if (isHero) {
       const contentO = clamp(1 - explode * 1.9, 0, 1);
+      /* Continuar: visível enquanto a expansão não terminou */
+      if (continueBtn && pinActive) continueBtn.hidden = explode > 0.98;
       if (heroContent) {
         heroContent.style.opacity = contentO.toFixed(3);
         heroContent.style.transform = `translateY(${(-explode * 46).toFixed(1)}px)`;
