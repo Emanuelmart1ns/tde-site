@@ -260,19 +260,6 @@ function createClutch(canvas) {
   const toggleBtn = isHero ? document.getElementById("explode-toggle") : null;
   const toggleTxt = toggleBtn ? toggleBtn.querySelector(".txt") : null;
 
-  /* --- Botão Continuar: salta o fim da expansão e larga o hero ---
-     Sem lock à entrada: o scroll expande desde o primeiro momento. O botão
-     fica visível enquanto o pin está ativo e a expansão não chegou ao fim;
-     clicar leva a página ao fim da zona de pin (explode completo). */
-  const continueBtn = isHero ? document.getElementById("hero-continue") : null;
-  if (isHero && pinActive && continueBtn && heroPin) {
-    continueBtn.hidden = false;
-    continueBtn.addEventListener("click", () => {
-      const range = heroPin.offsetHeight - window.innerHeight;
-      window.scrollTo({ top: heroPin.offsetTop + range, behavior: "smooth" });
-    });
-  }
-
   /* Modo sem pin (regresso de outra página do site): colapsar a zona de 350vh */
   if (isHero && !pinActive && heroPin) {
     heroPin.classList.add("no-pin");
@@ -497,8 +484,6 @@ function createClutch(canvas) {
     /* Conteúdo do hero esbate-se com o progresso */
     if (isHero) {
       const contentO = clamp(1 - explode * 1.9, 0, 1);
-      /* Continuar: visível enquanto a expansão não terminou */
-      if (continueBtn && pinActive) continueBtn.hidden = explode > 0.98;
       if (heroContent) {
         heroContent.style.opacity = contentO.toFixed(3);
         heroContent.style.transform = `translateY(${(-explode * 46).toFixed(1)}px)`;
