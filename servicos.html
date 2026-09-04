@@ -3,34 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Serviços — TDE | Travões, Discos e Embraiagens, Lda.</title>
-  <meta name="description" content="Recuperação de embraiagens, rectificação de volantes de motor, calços e cintas de travão, rectificação de discos e tambores. TDE, Zona Industrial do Porto.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Serviços | TDE — Travões, Discos e Embraiagens, Lda.</title>
+  <meta name="description" content="Recuperação de embraiagens, rectificação de volantes, calços e cintas de travão, discos e tambores. Técnicos especializados no Porto.">
+  <meta name="theme-color" content="#050608">
+  <link rel="preload" href="assets/fonts/unbounded-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/manrope-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/style.css">
   <script type="importmap">
-    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+    { "imports": { "three": "./assets/vendor/three/three.module.js", "three/addons/": "./assets/vendor/three/addons/" } }
   </script>
 </head>
 <body>
+  <div class="aurora" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
 
   <header class="site-header">
     <nav class="nav container" aria-label="Navegação principal">
-      <a class="brand" href="index.html">
+      <a class="brand" href="index.html" aria-label="TDE — Início">
         <span class="brand-mark">TDE</span>
-        <span class="brand-sub">Travões · Discos · Embraiagens</span>
+        <span class="brand-sub">Travões · Discos<br>Embraiagens</span>
       </a>
-      <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="nav-links">
-        <li><a href="index.html">Início</a></li>
-        <li><a href="empresa.html">Empresa</a></li>
-        <li><a href="servicos.html">Serviços</a></li>
-        <li><a href="produtos.html">Produtos</a></li>
-        <li><a href="contactos.html">Contactos</a></li>
-      </ul>
+      <div class="nav-pill">
+        <a href="index.html">Início</a>
+        <a href="empresa.html">Empresa</a>
+        <a href="servicos.html">Serviços</a>
+        <a href="produtos.html">Produtos</a>
+        <a href="contactos.html">Contactos</a>
+      </div>
+      <a class="btn btn-primary nav-cta" href="contactos.html">Pedir orçamento <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <button class="nav-toggle" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span></button>
     </nav>
   </header>
 
@@ -39,89 +40,86 @@
     <section class="page-header">
       <canvas class="ambient-canvas" data-clutch-mode="ambient" aria-hidden="true"></canvas>
       <div class="container ph-content">
-        <p class="tech-label reveal">02 — Serviços</p>
-        <h1 class="chrome-text reveal" style="--rd:.08s;margin-top:.9rem">Serviços</h1>
-        <p class="crumbs reveal" style="--rd:.16s">Início <b>/</b> Serviços</p>
+        <p class="eyebrow reveal">02 — Serviços</p>
+        <h1 class="chrome-text chrome-text--shine reveal" style="--rd:.08s">Serviços</h1>
+        <p class="lead reveal" style="--rd:.16s">Cinco especialidades, um único padrão: desmontar, medir, recuperar e testar com garantia.</p>
+        <p class="crumbs reveal" style="--rd:.24s">Início <b>/</b> Serviços</p>
       </div>
     </section>
 
     <section class="section">
-      <div class="container">
-
-        <div class="service-row reveal">
-          <span class="svc-no">01</span>
-          <div class="svc-body">
-            <div class="svc-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/></svg>
-            </div>
-            <div>
-              <h3>Recuperação de peças auto</h3>
-              <p>Recuperamos embraiagens simples, de competição e duplas com bimassa e de tractor, devolvendo a cada conjunto as prestações e a fiabilidade originais. Do automóvel de dia-a-dia ao veículo de competição ou agrícola, cada peça é desmontada, verificada e reconstruída com materiais de fricção de qualidade comprovada.</p>
-            </div>
+      <div class="container svc-layout">
+        <div class="svc-list reveal" role="list">
+          <div class="svc-item open" role="button" tabindex="0" aria-expanded="true" data-facts="Embraiagens | Bimassa | Competição | Tractor">
+            <span class="no">01</span>
+            <h3>Recuperação de peças auto</h3>
+            <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+            <div class="body"><p>Recuperamos embraiagens simples, de competição e duplas com bimassa e de tractor, devolvendo a cada conjunto as prestações e a fiabilidade originais. Do automóvel de dia-a-dia ao veículo de competição ou agrícola, cada peça é desmontada, verificada e reconstruída com materiais de fricção de qualidade comprovada.</p></div>
+            <template class="svc-icon-src"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3"/></svg></template>
+          </div>
+          <div class="svc-item" role="button" tabindex="0" aria-expanded="false" data-facts="Monomassa | Bimassa | Calibração">
+            <span class="no">02</span>
+            <h3>Rectificação de volantes de motor</h3>
+            <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+            <div class="body"><p>Rectificamos volantes de motor — tirar peso e calibrar — para eliminar empenos, ondulações e marcas de calor que provocam vibrações e patinagem da embraiagem. O equilíbrio final é verificado para garantir um funcionamento suave, quer se trate de um volante monomassa ou bimassa.</p></div>
+            <template class="svc-icon-src"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="6.4" r="1"/><circle cx="16.8" cy="14.8" r="1"/><circle cx="7.2" cy="14.8" r="1"/></svg></template>
+          </div>
+          <div class="svc-item" role="button" tabindex="0" aria-expanded="false" data-facts="Ligeiros | Pesados | Revestimento">
+            <span class="no">03</span>
+            <h3>Calços de travão</h3>
+            <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+            <div class="body"><p>Recuperamos calços de travão com revestimentos de fricção adequados a cada aplicação, do veículo ligeiro ao pesado. Um travão recuperado correctamente garante distâncias de travagem curtas e um comportamento estável, mesmo nas utilizações mais exigentes.</p></div>
+            <template class="svc-icon-src"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8.5A9 9 0 0 1 20 8.5l-2.4 1.4a5.6 5.6 0 0 0-11.2 0L4 8.5z"/><path d="M4 15.5A9 9 0 0 0 20 15.5l-2.4-1.4a5.6 5.6 0 0 1-11.2 0L4 15.5z"/></svg></template>
+          </div>
+          <div class="svc-item" role="button" tabindex="0" aria-expanded="false" data-facts="Vulcanização | Fricção | Alta temperatura">
+            <span class="no">04</span>
+            <h3>Cintas de travão</h3>
+            <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+            <div class="body"><p>Efectuamos a vulcanização de cintas de travão e peças de fricção, um processo que assegura uma aderência permanente entre o revestimento e o suporte metálico. O resultado é uma cinta resistente a temperaturas elevadas e a esforços intensos de travagem.</p></div>
+            <template class="svc-icon-src"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14c4-8 14-8 18 0"/><path d="M5 14h14M7 17h10" stroke-linecap="round"/></svg></template>
+          </div>
+          <div class="svc-item" role="button" tabindex="0" aria-expanded="false" data-facts="Discos | Tambores | Tolerâncias OEM">
+            <span class="no">05</span>
+            <h3>Rectificação de discos e tambores</h3>
+            <span class="plus" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></span>
+            <div class="body"><p>Rectificamos discos e tambores de travão dentro das tolerâncias recomendadas pelo fabricante, corrigindo riscos, empenos e espessuras irregulares. Sempre que a rectificação já não é segura, aconselhamos a substituição — com garantia e responsabilidade.</p></div>
+            <template class="svc-icon-src"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><path d="M12 5.5v13M5.5 12h13M7.4 7.4l9.2 9.2M16.6 7.4l-9.2 9.2"/></svg></template>
           </div>
         </div>
-
-        <div class="service-row alt reveal">
-          <span class="svc-no">02</span>
-          <div class="svc-body">
-            <div class="svc-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="6.4" r="1"/><circle cx="16.8" cy="14.8" r="1"/><circle cx="7.2" cy="14.8" r="1"/></svg>
-            </div>
-            <div>
-              <h3>Rectificação de volantes de motor</h3>
-              <p>Rectificamos volantes de motor — tirar peso e calibrar — para eliminar empenos, ondulações e marcas de calor que provocam vibrações e patinagem da embraiagem. O equilíbrio final é verificado para garantir um funcionamento suave, quer se trate de um volante monomassa ou bimassa.</p>
-            </div>
+        <div class="sticky-aside">
+          <div class="svc-panel glass reveal" style="--rd:.1s" aria-live="polite">
+            <div class="icon-big" aria-hidden="true"></div>
+            <h3></h3>
+            <p></p>
+            <div class="facts"></div>
           </div>
         </div>
-
-        <div class="service-row reveal">
-          <span class="svc-no">03</span>
-          <div class="svc-body">
-            <div class="svc-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 8.5A9 9 0 0 1 20 8.5l-2.4 1.4a5.6 5.6 0 0 0-11.2 0L4 8.5z"/><path d="M4 15.5A9 9 0 0 0 20 15.5l-2.4-1.4a5.6 5.6 0 0 1-11.2 0L4 15.5z"/></svg>
-            </div>
-            <div>
-              <h3>Calços de travão</h3>
-              <p>Recuperamos calços de travão com revestimentos de fricção adequados a cada aplicação, do veículo ligeiro ao pesado. Um travão recuperado correctamente garante distâncias de travagem curtas e um comportamento estável, mesmo nas utilizações mais exigentes.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="service-row alt reveal">
-          <span class="svc-no">04</span>
-          <div class="svc-body">
-            <div class="svc-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 14c4-8 14-8 18 0"/><path d="M5 14h14M7 17h10" stroke-linecap="round"/></svg>
-            </div>
-            <div>
-              <h3>Cintas de travão</h3>
-              <p>Efectuamos a vulcanização de cintas de travão e peças de fricção, um processo que assegura uma aderência permanente entre o revestimento e o suporte metálico. O resultado é uma cinta resistente a temperaturas elevadas e a esforços intensos de travagem.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="service-row reveal">
-          <span class="svc-no">05</span>
-          <div class="svc-body">
-            <div class="svc-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8.5"/><path d="M12 5.5v13M5.5 12h13M7.4 7.4l9.2 9.2M16.6 7.4l-9.2 9.2"/></svg>
-            </div>
-            <div>
-              <h3>Rectificação de discos e tambores de travão</h3>
-              <p>Rectificamos discos e tambores de travão dentro das tolerâncias recomendadas pelo fabricante, corrigindo riscos, empenos e espessuras irregulares. Sempre que a rectificação já não é segura, aconselhamos a substituição — com garantia e responsabilidade.</p>
-            </div>
-          </div>
-        </div>
-
       </div>
     </section>
 
-    <section class="section cta-band">
+    <section class="section section--tight">
       <div class="container">
-        <h2 class="chrome-text reveal">Tem um problema com a embraiagem?</h2>
-        <p class="reveal" style="--rd:.08s">Fale com os nossos técnicos — aconselhamos a solução certa para o seu automóvel.</p>
-        <div class="reveal" style="--rd:.16s">
-          <a class="btn btn-primary" href="contactos.html">Contactar</a>
+        <div class="section-head reveal">
+          <p class="eyebrow">Como trabalhamos</p>
+          <h2 class="h-lg chrome-text">Da bancada à estrada</h2>
+        </div>
+        <div class="process" data-stagger>
+          <div class="step reveal"><div class="no">01</div><h3>Diagnóstico</h3><p>Recebemos a peça, ouvimos o problema e medimos desgaste, empeno e folgas.</p></div>
+          <div class="step reveal"><div class="no">02</div><h3>Desmontagem</h3><p>Cada componente é separado, limpo e avaliado individualmente.</p></div>
+          <div class="step reveal"><div class="no">03</div><h3>Recuperação</h3><p>Rectificação, substituição de fricção e molas, calibração e equilíbrio.</p></div>
+          <div class="step reveal"><div class="no">04</div><h3>Teste e garantia</h3><p>Montagem final, verificação e entrega com garantia TDE.</p></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section class="section section--tight">
+      <div class="container">
+        <div class="cta glass reveal reveal--scale">
+          <p class="eyebrow">Aconselhamento</p>
+          <h2 class="chrome-text">Tem um problema com a embraiagem?</h2>
+          <p>Fale com os nossos técnicos — aconselhamos a solução certa para o seu automóvel.</p>
+          <a class="btn btn-primary" href="contactos.html">Contactar <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
       </div>
     </section>
@@ -129,13 +127,11 @@
   </main>
 
   <footer class="site-footer">
+    <div class="footer-big" aria-hidden="true">TDE</div>
     <div class="container footer-grid">
-      <div class="footer-brand">
-        <a class="brand" href="index.html">
-          <span class="brand-mark">TDE</span>
-          <span class="brand-sub">Travões · Discos · Embraiagens</span>
-        </a>
-        <p>Vinte anos de experiência em recuperação de peças auto, com garantia e responsabilidade.</p>
+      <div>
+        <a class="brand" href="index.html"><span class="brand-mark">TDE</span><span class="brand-sub">Travões · Discos<br>Embraiagens</span></a>
+        <p>Vinte anos de recuperação de peças auto na Zona Industrial do Porto, com garantia e responsabilidade.</p>
       </div>
       <div class="footer-col">
         <h4>Navegação</h4>
@@ -150,7 +146,7 @@
       <div class="footer-col">
         <h4>Contactos</h4>
         <ul>
-          <li>Rua Eng. Ezequiel Campos, 340<br>Zona Industrial do Porto<br>4100-288 Porto</li>
+          <li>Rua Eng. Ezequiel Campos, 340<br>Zona Industrial do Porto · 4100-288 Porto</li>
           <li><a href="tel:+351228301710">Tel: 228 301 710</a></li>
           <li>Fax: 228 301 732</li>
           <li><a href="mailto:geral@tde.com.pt">geral@tde.com.pt</a></li>
@@ -158,7 +154,7 @@
       </div>
     </div>
     <div class="container footer-bottom">
-      <span>© 2025 TDE — Travões, Discos e Embraiagens, Lda.</span>
+      <span>© 2026 TDE — Travões, Discos e Embraiagens, Lda.</span>
       <span>Zona Industrial do Porto</span>
     </div>
   </footer>
