@@ -474,10 +474,11 @@ function createClutch(canvas) {
     /* Flutuação + "respiração"; ao desmontar, afastar/encolher ligeiramente
        para o conjunto expandido caber em ecrã */
     group.position.y = group.userData.baseY + Math.sin(t * 0.75) * 0.05
-      + (isHero ? explode * 0.5 : 0);
+      + (isHero ? explode * 0.3 : 0);
     group.scale.setScalar(group.userData.baseScale * (1 + Math.sin(t * 0.55) * 0.012)
       * (isHero ? 1 - explode * 0.2 : 1));
-    group.position.x = baseX - (isHero ? explode * 0.9 : 0);
+    /* Ao expandir, o conjunto desliza da posição lateral para o CENTRO da página */
+    group.position.x = baseX * (isHero ? 1 - explode : 1);
 
     if (particles) particles.rotation.z = t * 0.03;
 
