@@ -1,6 +1,6 @@
 {
   "model": "assets/models/iphone17promax.glb",
-  "comment": "Cores oficiais iPhone 17 Pro Max. Aplicar em runtime: gltf.scene.traverse(o => { if (o.isMesh && map[o.material.name]) o.material.color.set(map[o.material.name]) }). Os valores finais afinam-se no ambiente do site (fundo escuro) — estes são pontos de partida fieis às fotos da Apple.",
+  "comment": "Cores oficiais iPhone 17 Pro Max. Aplicar em runtime: gltf.scene.traverse(o => { if (o.isMesh && map[o.material.name]) o.material.color.set(map[o.material.name]) }). Valores afinados para FUNDO BRANCO (site Icase) — ver previews .preview-tmp/iphone-white-*.png.",
   "colorways": {
     "silver": {
       "label": "Silver",
