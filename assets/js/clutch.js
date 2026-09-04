@@ -108,6 +108,8 @@ function createClutch(canvas) {
   const parts = [];              // raízes part_z0..z3
   const partMats = [[], [], [], []]; // materiais clonados por peça (hover)
   const proxies = [];            // cilindros invisíveis para raycast
+  const partMin = [];            // bbox min local de cada peça (eixo pilha)
+  const partMax = [];            // bbox max local
   let modelReady = false;
 
   new GLTFLoader().load(
@@ -142,6 +144,16 @@ function createClutch(canvas) {
         part.add(proxy);
         proxies.push(proxy);
         parts[i] = part;
+      });
+
+      /* Medir a caixa de cada peça (eixo local Y = eixo da pilha) para
+         recentrar a pilha pelo seu ponto médio real, não pela traseira */
+      const bb = new THREE.Box3();
+      parts.forEach((p, i) => {
+        if (!p) return;
+        bb.setFromObject(p);
+        partMin[i] = bb.min.y - p.position.y; // span relativo à origem da peça
+        partMax[i] = bb.max.y - p.position.y;
       });
 
       modelReady = true;
@@ -445,12 +457,16 @@ function createClutch(canvas) {
     if (Math.abs(target - explode) < 0.0005) explode = target;
 
     if (modelReady) {
+      /* Pivô no centro da pilha: calcula o ponto médio real (z0 traseira →
+         z3 frente) com as caixas medidas e desloca cada peça por -mid.
+         A rotação/expansão passa a ser simétrica em redor do centro. */
+      const lo = PART_Y[0] + explode * EXPLODE_OFF[0] + (partMin[0] || 0);
+      const hi = PART_Y[3] + explode * EXPLODE_OFF[3] + (partMax[3] || 0);
+      const mid = (lo + hi) / 2;
       parts.forEach((p, i) => {
         if (!p) return;
-        p.position.y = PART_Y[i] + explode * EXPLODE_OFF[i];
+        p.position.y = PART_Y[i] + explode * EXPLODE_OFF[i] - mid;
       });
-      // Recentrar o conjunto ao expandir (eixo local +Y = eixo da pilha)
-      modelGroup.position.y = -(PART_Y[3] + explode * EXPLODE_OFF[3]) / 2;
     }
 
     /* Rotação: arrasto + inércia; auto-rotação lenta em repouso */
